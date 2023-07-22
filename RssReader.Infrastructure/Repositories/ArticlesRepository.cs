@@ -22,7 +22,8 @@ internal class ArticlesRepository : IArticlesRepository
             {
                 Title = element.Element(xNameSpace + "title")?.Value ?? string.Empty,
                 Author = element.Element(xNameSpace + "author")?.Element(xNameSpace + "name")?.Value ?? string.Empty,
-                PublishedTime = DateTime.Parse(element.Element(xNameSpace + "published")?.Value ?? "00:00:00")
+                PublishedTime = DateTime.Parse(element.Element(xNameSpace + "published")?.Value ?? "00:00:00"),
+                Link = element.Element(xNameSpace + "link")?.Attribute("href")?.Value ?? string.Empty
             };
         }
     }
