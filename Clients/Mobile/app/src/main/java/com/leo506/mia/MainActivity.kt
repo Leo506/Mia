@@ -1,5 +1,6 @@
 package com.leo506.mia
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -45,9 +46,20 @@ fun MainActivityView(
 ) {
     val isRefreshing by viewModel.isRefreshing.collectAsState()
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isRefreshing)
+    val context = LocalContext.current
     SwipeRefresh(
         state = swipeRefreshState,
-        onRefresh = viewModel::refresh) {
+        onRefresh = {
+            try {
+                viewModel.refresh()
+            }
+            catch (e:Exception) {
+                AlertDialog.Builder(context)
+                    .setTitle(e::class.simpleName)
+                    .setMessage(e.message)
+                    .show()
+            }
+        }) {
         ArticlesList(viewModel)
     }
 }
