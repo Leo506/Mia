@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import viewModels.MainViewModel
@@ -40,27 +41,31 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainActivityView(
-    viewModel: MainViewModel = MainViewModel()
+    viewModel: MainViewModel = viewModel()
 ) {
     val isRefreshing by viewModel.isRefreshing.collectAsState()
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isRefreshing)
     SwipeRefresh(
         state = swipeRefreshState,
         onRefresh = viewModel::refresh) {
-        ArticlesList()
+        ArticlesList(viewModel)
     }
 }
 
 @Composable
-@Preview
-fun ArticlesList() {
+fun ArticlesList(viewModel: MainViewModel) {
+    val articlesState by viewModel.articles.collectAsState()
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
+            .background(Color.Black)
             .padding(10.dp)
     ) {
-        items(5) {
-            Article()
+        items(articlesState.size) {
+            val title = articlesState[it].Title
+            val author = articlesState[it].Author
+            val uri = articlesState[it].Url
+            Article(title, author, uri)
         }
     }
 }
@@ -80,9 +85,9 @@ fun Article(
             .padding(top = 5.dp, bottom = 5.dp)
             .clickable {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
-                context.startActivity(intent);
+                context.startActivity(intent)
             },
-        shape = RoundedCornerShape(50)
+        shape = RoundedCornerShape(15)
     ) {
         Column(
             modifier = Modifier
