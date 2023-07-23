@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -26,23 +27,29 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import viewModels.MainViewModel
 
 class MainActivity : ComponentActivity() {
+
+    private val viewModel: MainViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
+        splashScreen.setKeepOnScreenCondition { viewModel.isPageLoading.value }
+
         setContent {
-            MainActivityView()
+            MainActivityView(viewModel)
         }
     }
 }
 
 @Composable
 fun MainActivityView(
-    viewModel: MainViewModel = viewModel()
+    viewModel: MainViewModel
 ) {
     val isRefreshing by viewModel.isRefreshing.collectAsState()
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isRefreshing)

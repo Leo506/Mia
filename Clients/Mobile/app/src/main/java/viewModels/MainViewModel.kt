@@ -15,6 +15,15 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 class MainViewModel: ViewModel() {
+    private val _isPageLoading = MutableStateFlow(true)
+    val isPageLoading = _isPageLoading.asStateFlow()
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            updateArticlesList()
+            _isPageLoading.update { false }
+        }
+    }
+
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing.asStateFlow()
 
@@ -24,15 +33,18 @@ class MainViewModel: ViewModel() {
     fun refresh() = viewModelScope.launch(Dispatchers.IO) {
         try {
             _isRefreshing.update { true }
-            val newArticlesList = getArticles()
-            _articles.update {
-                newArticlesList
-            }
+            updateArticlesList()
         }
         finally {
             _isRefreshing.update { false }
         }
+    }
 
+    private fun updateArticlesList() {
+        val newArticlesList = getArticles()
+        _articles.update {
+            newArticlesList
+        }
     }
 
     private fun getArticles(): List<Article> {
