@@ -1,0 +1,57 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Mia.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="350" d:DesignHeight="550"
+        Width="350" Height="550"
+        x:Class="Mia.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        CanResize="False"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Mia">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+
+    <Window.Styles>
+        <StyleInclude Source="Style.axaml" />
+    </Window.Styles>
+
+    <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid ColumnDefinitions="*, Auto" MaxHeight="49">
+            <TextBox x:Name="RssInput"
+                     Height="49"
+                     Margin="14, 14, 14, 0"
+                     Watermark="Enter rss url"
+                     VerticalContentAlignment="Center"
+                     FontSize="16"
+                     FontWeight="Medium"
+                     VerticalAlignment="Center"
+                     CornerRadius="5"
+                     Text="{Binding RssUrl}"/>
+            <Button Grid.Column="1"
+                    Width="40"
+                    Height="33"
+                    Margin="11 20 24, 0"
+                    Background="#8F0392"
+                    VerticalAlignment="Center"
+                    IsVisible="{Binding RssUrl.Length}"
+                    Command="{Binding UpdateArticles}">
+                <Image Source="../Assets/find.png"/>
+            </Button>
+        </Grid>
+        <ListBox Margin="10" CornerRadius="4" IsVisible="False" />
+
+        <TextBlock Margin="69, 172, 70, 235"
+                   Text="Nothing to show"
+                   FontSize="32"
+                   FontWeight="Bold"
+                   TextWrapping="Wrap"
+                   TextAlignment="Center"
+                   Foreground="#A3A2A2"
+                   IsVisible="{Binding !Articles.Count}"/>
+    </StackPanel>
+
+</Window>
