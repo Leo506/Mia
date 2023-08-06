@@ -7,6 +7,7 @@
         Width="350" Height="550"
         x:Class="Mia.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
+        WindowStartupLocation="CenterScreen"
         CanResize="False"
         Icon="/Assets/avalonia-logo.ico"
         Title="Mia">
@@ -19,7 +20,7 @@
         <StyleInclude Source="Style.axaml" />
     </Window.Styles>
 
-    <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" RowDefinitions="Auto, *">
         <Grid ColumnDefinitions="*, Auto" MaxHeight="49">
             <TextBox x:Name="RssInput"
                      Height="49"
@@ -30,7 +31,7 @@
                      FontWeight="Medium"
                      VerticalAlignment="Center"
                      CornerRadius="5"
-                     Text="{Binding RssUrl}"/>
+                     Text="{Binding RssUrl}" />
             <Button Grid.Column="1"
                     Width="40"
                     Height="33"
@@ -39,19 +40,54 @@
                     VerticalAlignment="Center"
                     IsVisible="{Binding RssUrl.Length}"
                     Command="{Binding UpdateArticles}">
-                <Image Source="../Assets/find.png"/>
+                <Image Source="../Assets/find.png" />
             </Button>
         </Grid>
-        <ListBox Margin="10" CornerRadius="4" IsVisible="False" />
+        <ScrollViewer Grid.Row="1" Margin="14, 49, 14, 10">
+            <ItemsControl
+                          Background="Transparent"
+                          ItemsSource="{Binding Articles}"
+                          IsVisible="{Binding Articles.Count}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="#35D67F" CornerRadius="10" Margin="0 0 0 14">
+                            <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="0.7*, 0.3*">
+                                <TextBlock Text="{Binding Title}"
+                                           FontSize="20"
+                                           FontWeight="Regular"
+                                           TextWrapping="Wrap"
+                                           Margin="20, 14, 0, 0" />
+                                <TextBlock Grid.Row="1" Grid.Column="0"
+                                           Text="{Binding Author}"
+                                           FontSize="16"
+                                           FontWeight="Regular"
+                                           Margin="20, 4, 0, 14" />
+                                <Button Grid.RowSpan="2" Grid.Column="1"
+                                        Background="Transparent"
+                                        HorizontalAlignment="Right"
+                                        Margin="0, 0, 16, 0">
+                                    <Image Source="../Assets/Arrow 1.png" Width="38"/>
+                                </Button>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
 
-        <TextBlock Margin="69, 172, 70, 235"
+        <TextBlock Grid.Row="1" Margin="69, 172, 70, 235"
                    Text="Nothing to show"
                    FontSize="32"
                    FontWeight="Bold"
                    TextWrapping="Wrap"
                    TextAlignment="Center"
                    Foreground="#A3A2A2"
-                   IsVisible="{Binding !Articles.Count}"/>
-    </StackPanel>
+                   IsVisible="{Binding !Articles.Count}" />
+    </Grid>
 
 </Window>
