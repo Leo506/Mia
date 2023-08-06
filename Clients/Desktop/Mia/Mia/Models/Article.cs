@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace Mia.Models;
 
@@ -8,4 +9,10 @@ public record Article(
     //string Description,
     DateTime PublishTime,
     string Uri
-);
+)
+{
+    public void OpenArticle()
+    {
+        Process.Start(new ProcessStartInfo(Uri) { UseShellExecute = true });
+    }
+}

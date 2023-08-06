@@ -70,7 +70,8 @@
                                 <Button Grid.RowSpan="2" Grid.Column="1"
                                         Background="Transparent"
                                         HorizontalAlignment="Right"
-                                        Margin="0, 0, 16, 0">
+                                        Margin="0, 0, 16, 0"
+                                        Command="{Binding OpenArticle}">
                                     <Image Source="../Assets/Arrow 1.png" Width="38"/>
                                 </Button>
                             </Grid>
