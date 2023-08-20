@@ -1,120 +1,33 @@
 package com.leo506.mia
 
-import android.app.AlertDialog
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.viewModels
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import viewModels.MainViewModel
+import com.google.android.material.snackbar.Snackbar
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
+import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.setupActionBarWithNavController
+import android.view.Menu
+import android.view.MenuItem
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.leo506.mia.databinding.ActivityMainBinding
 
-class MainActivity : ComponentActivity() {
-
-    private val viewModel: MainViewModel by viewModels()
+class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var adapter: ArticlesAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val splashScreen = installSplashScreen()
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
-        splashScreen.setKeepOnScreenCondition { viewModel.isPageLoading.value }
 
-        setContent {
-            MainActivityView(viewModel)
-        }
-    }
-}
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-@Composable
-fun MainActivityView(
-    viewModel: MainViewModel
-) {
-    val isRefreshing by viewModel.isRefreshing.collectAsState()
-    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isRefreshing)
-    val context = LocalContext.current
-    SwipeRefresh(
-        state = swipeRefreshState,
-        onRefresh = {
-            try {
-                viewModel.refresh()
-            }
-            catch (e:Exception) {
-                AlertDialog.Builder(context)
-                    .setTitle(e::class.simpleName)
-                    .setMessage(e.message)
-                    .show()
-            }
-        }) {
-        ArticlesList(viewModel)
-    }
-}
+        val manager = LinearLayoutManager(this)
+        adapter = ArticlesAdapter()
 
-@Composable
-fun ArticlesList(viewModel: MainViewModel) {
-    val articlesState by viewModel.articles.collectAsState()
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black)
-            .padding(10.dp)
-    ) {
-        items(articlesState.size) {
-            val title = articlesState[it].Title
-            val author = articlesState[it].Author
-            val uri = articlesState[it].Url
-            Article(title, author, uri)
-        }
-    }
-}
-
-@Composable
-@Preview
-fun Article(
-    title: String = "Title",
-    author: String = "u/leo506",
-    uri: String = "https://www.reddit.com/r/programming/comments/155nvnp/what_does_a_cto_actually_do/"
-
-) {
-    val context = LocalContext.current
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 5.dp, bottom = 5.dp)
-            .clickable {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
-                context.startActivity(intent)
-            },
-        shape = RoundedCornerShape(15)
-    ) {
-        Column(
-            modifier = Modifier
-                .background(Color.Gray)
-                .padding(start = 15.dp, top = 5.dp, bottom = 5.dp)
-        ) {
-            Text(text = title, fontSize = 25.sp, color = Color.White, fontStyle = FontStyle.Italic)
-            Text(text = author, fontSize = 15.sp, color = Color.Black)
-        }
+        binding.articlesList.layoutManager = manager
+        binding.articlesList.adapter = adapter;
     }
 }

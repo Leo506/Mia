@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/rss_input_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="26dp"
+        android:layout_marginEnd="26dp"
+        android:layout_marginTop="10dp"
+        android:fitsSystemWindows="true"
+        android:hint="@string/enter_rss_url"
+        app:endIconMode="clear_text">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/rss_input"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="text"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/nothing_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="40sp"
+        android:layout_centerInParent="true"
+        android:textAlignment="center"
+        android:textColor="@color/material_dynamic_neutral50"
+        android:visibility="gone"
+        android:text="@string/nothing_to_n_show"/>
+    
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/articles_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/rss_input_layout"
+        android:layout_marginTop="18dp"
+        android:layout_marginStart="26dp"
+        android:layout_marginEnd="26dp"
+        android:clipToPadding="false"
+        android:layout_centerInParent="true"/>
+</RelativeLayout>
