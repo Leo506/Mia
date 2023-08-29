@@ -1,17 +1,14 @@
 package com.leo506.mia
 
+import android.content.Context
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import android.view.Menu
-import android.view.MenuItem
+import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.leo506.mia.databinding.ActivityMainBinding
+import utils.RssFeedParser
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -28,6 +25,35 @@ class MainActivity : AppCompatActivity() {
         adapter = ArticlesAdapter()
 
         binding.articlesList.layoutManager = manager
-        binding.articlesList.adapter = adapter;
+        binding.articlesList.adapter = adapter
+
+        binding.rssInputLayout.isEndIconVisible = false
+        binding.rssInputLayout.isEndIconCheckable = true
+        binding.rssInput.doAfterTextChanged {
+            binding.rssInputLayout.isEndIconVisible = it?.any() == true
+            binding.rssInputLayout.error = null
+        }
+
+        binding.rssInputLayout.setEndIconOnClickListener {
+            val t = Thread {
+                try {
+                    val articles = RssFeedParser.parseRssFeed(binding.rssInput.text.toString())
+                    runOnUiThread {
+                        adapter.articles = articles
+                    }
+                } catch (e: Exception) {
+                    runOnUiThread {
+                        binding.rssInputLayout.error = "Can not parse rss"
+                    }
+                }
+                runOnUiThread {
+                    val inputMethodManager =
+                        getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    inputMethodManager.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+                    binding.rssInput.clearFocus()
+                }
+            }
+            t.start()
+        }
     }
 }
