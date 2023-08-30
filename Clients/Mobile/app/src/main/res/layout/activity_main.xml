@@ -21,7 +21,8 @@
             android:id="@+id/rss_input"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:inputType="text"/>
+            android:inputType="text"
+            android:backgroundTint="@android:color/transparent"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
