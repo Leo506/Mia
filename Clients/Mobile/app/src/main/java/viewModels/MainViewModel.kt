@@ -18,6 +18,9 @@ class MainViewModel : ViewModel() {
 
     val hasError = MutableLiveData<Boolean>()
 
+    private val _isUpdating = MutableLiveData<Boolean>()
+    val isUpdating: LiveData<Boolean> = _isUpdating
+
     init {
         _articles.value = emptyList()
         hasError.value = false
@@ -25,6 +28,7 @@ class MainViewModel : ViewModel() {
 
     fun updateArticlesList(feedUrl: String) {
         _articles.value = emptyList()
+        _isUpdating.value = true
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 try {
@@ -33,6 +37,8 @@ class MainViewModel : ViewModel() {
                 } catch (e: Exception) {
                     Log.e("MIA", e.message.toString())
                     hasError.postValue(true)
+                } finally {
+                    _isUpdating.postValue(false)
                 }
             }
         }

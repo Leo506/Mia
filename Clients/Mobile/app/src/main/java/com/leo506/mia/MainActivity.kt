@@ -23,8 +23,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.nothingText.visibility = View.VISIBLE
-
         setupViewModelObservers()
 
         setupRecyclerView()
@@ -45,6 +43,13 @@ class MainActivity : AppCompatActivity() {
             when {
                 it -> binding.rssInputLayout.error = "Can not parse rss"
                 else -> binding.rssInputLayout.error = null
+            }
+        }
+
+        vm.isUpdating.observe(this) {
+            when {
+                it -> binding.progressIndicator.visibility = View.VISIBLE
+                else -> binding.progressIndicator.visibility = View.GONE
             }
         }
     }
