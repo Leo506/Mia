@@ -2,6 +2,7 @@ package com.leo506.mia
 
 import android.content.Context
 import android.os.Bundle
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
@@ -21,6 +22,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.nothingText.visibility = View.VISIBLE
+
         val manager = LinearLayoutManager(this)
         adapter = ArticlesAdapter()
 
@@ -35,22 +38,23 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.rssInputLayout.setEndIconOnClickListener {
+            val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputMethodManager.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+            binding.rssInput.clearFocus()
             val t = Thread {
                 try {
                     val articles = RssFeedParser.parseRssFeed(binding.rssInput.text.toString())
                     runOnUiThread {
                         adapter.articles = articles
+                        when {
+                            articles.isNotEmpty() -> binding.nothingText.visibility = View.GONE
+                            else -> binding.nothingText.visibility = View.VISIBLE
+                        }
                     }
                 } catch (e: Exception) {
                     runOnUiThread {
                         binding.rssInputLayout.error = "Can not parse rss"
                     }
-                }
-                runOnUiThread {
-                    val inputMethodManager =
-                        getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                    inputMethodManager.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
-                    binding.rssInput.clearFocus()
                 }
             }
             t.start()

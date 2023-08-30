@@ -1,5 +1,7 @@
 package com.leo506.mia
 
+import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -30,6 +32,11 @@ class ArticlesAdapter : RecyclerView.Adapter<ArticlesAdapter.ArticlesViewHolder>
         with(holder.bindings) {
             title.text = article.Title
             subtitle.text = article.Author
+        }
+
+        holder.itemView.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(article.Url))
+            holder.itemView.context.startActivity(intent)
         }
     }
 }
